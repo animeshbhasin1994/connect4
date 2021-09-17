@@ -54,7 +54,7 @@ Assign player1 their color
 @app.route('/p1Color', methods=['GET'])
 def player1_config():
     status = request.args.get('color', '')
-    game.player1 = status
+    game.set_player_color('p1', status)
     return render_template('player1_connect.html', status=status)
 
 
@@ -71,11 +71,11 @@ Assign player2 their color
 @app.route('/p2Join', methods=['GET'])
 def p2Join():
     if game.player1 == 'red':
-        game.player2 = 'yellow'
+        game.set_player_color('p2', 'yellow')
     elif game.player1 == 'yellow':
-        game.player2 = 'red'
+        game.set_player_color('p2', 'red')
     else:
-        game.player2 = 'Error'
+        game.set_player_color('p2', 'Error')
     return render_template('p2Join.html', status=game.player2)
 
 
