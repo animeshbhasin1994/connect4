@@ -16,6 +16,12 @@ class Gameboard():
     def reset_game(self):
         self.__init__()
 
+    def set_player_color(self, player, color):
+        if player == 'p1':
+            self.player1 = color
+        else:
+            self.player2 = color
+
     def next_move_row_index(self, col):
         for i in range(6):
             if self.board[i][col] != 0:
@@ -35,7 +41,7 @@ class Gameboard():
     def four_in_a_row_check(self, color):
         for j in range(7):
             for i in range(3):
-                if self.board[i+3][j] == color \
+                if self.board[i + 3][j] == color \
                         and self.board[i + 2][j] == color \
                         and self.board[i + 1][j] == color \
                         and self.board[i][j] == color:
@@ -44,7 +50,7 @@ class Gameboard():
         for j in range(4):
             for i in range(6):
                 if self.board[i][j+3] == color \
-                        and self.board[j][j + 2] == color \
+                        and self.board[i][j + 2] == color \
                         and self.board[i][j + 1] == color \
                         and self.board[i][j] == color:
                     return True
@@ -66,7 +72,7 @@ class Gameboard():
                     return True
 
     def check_game_over(self, color):
-        if self.remaining_moves == 0:
-            self.game_result = ""
+        if self.remaining_moves <= 0:
+            self.game_result = "draw - no winner"
         if self.four_in_a_row_check(color):
             self.game_result = 'p1' if color == self.player1 else 'p2'
