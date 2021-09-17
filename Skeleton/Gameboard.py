@@ -1,4 +1,5 @@
-import db
+# import db
+
 
 class Gameboard():
     def __init__(self):
@@ -9,6 +10,9 @@ class Gameboard():
         self.current_turn = 'p1'
         self.remaining_moves = 42
 
+    '''
+    Add Helper functions as needed to handle moves and update board and turns
+    '''
     def reset_game(self):
         self.__init__()
 
@@ -18,12 +22,12 @@ class Gameboard():
                 return i-1
         return 5
 
-    def make_p1_move(self,row_idx,col_no):
+    def make_p1_move(self, row_idx, col_no):
         self.board[row_idx][col_no] = self.player1
         self.current_turn = 'p2'
         self.remaining_moves -= 1
 
-    def make_p2_move(self,row_idx,col_no):
+    def make_p2_move(self, row_idx, col_no):
         self.board[row_idx][col_no] = self.player2
         self.current_turn = 'p1'
         self.remaining_moves -= 1
@@ -31,26 +35,34 @@ class Gameboard():
     def four_in_a_row_check(self, color):
         for j in range(7):
             for i in range(3):
-                if self.board[i+3][j] == color and self.board[i + 2][j] == color and self.board[i + 1][j] == color \
+                if self.board[i+3][j] == color \
+                        and self.board[i + 2][j] == color \
+                        and self.board[i + 1][j] == color \
                         and self.board[i][j] == color:
                     return True
 
         for j in range(4):
             for i in range(6):
-                if self.board[i][j+3] == color and self.board[j][j + 2] == color and self.board[i][j + 1] == color \
+                if self.board[i][j+3] == color \
+                        and self.board[j][j + 2] == color \
+                        and self.board[i][j + 1] == color \
                         and self.board[i][j] == color:
                     return True
 
         for j in range(4):
             for i in range(3):
-                if self.board[i + 3][j + 3] == color and self.board[i + 2][j + 2] == color \
-                        and self.board[i + 1][j + 1] == color and self.board[i][j] == color:
+                if self.board[i + 3][j + 3] == color  \
+                        and self.board[i + 2][j + 2] == color \
+                        and self.board[i + 1][j + 1] == color\
+                        and self.board[i][j] == color:
                     return True
 
         for j in range(4):
             for i in range(3, 6):
-                if self.board[i - 3][j + 3] == color and self.board[i - 2][j + 2] == color \
-                        and self.board[i - 1][j + 1] == color and self.board[i][j] == color:
+                if self.board[i - 3][j + 3] == color \
+                        and self.board[i - 2][j + 2] == color \
+                        and self.board[i - 1][j + 1] == color \
+                        and self.board[i][j] == color:
                     return True
 
     def check_game_over(self, color):
@@ -58,17 +70,3 @@ class Gameboard():
             self.game_result = ""
         if self.four_in_a_row_check(color):
             self.game_result = 'p1' if color == self.player1 else 'p2'
-
-
-
-
-'''
-Add Helper functions as needed to handle moves and update board and turns
-'''
-
-
-
-
-
-
-    
