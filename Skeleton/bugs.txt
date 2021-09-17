@@ -1,0 +1,35 @@
+./test_Gameboard.py:3:1: E302 expected 2 blank lines, found 1
+./Gameboard.py:1:1: F401 'db' imported but unused
+./Gameboard.py:3:1: E302 expected 2 blank lines, found 1
+./Gameboard.py:21:26: E231 missing whitespace after ','
+./Gameboard.py:21:34: E231 missing whitespace after ','
+./Gameboard.py:26:26: E231 missing whitespace after ','
+./Gameboard.py:26:34: E231 missing whitespace after ','
+./Gameboard.py:34:80: E501 line too long (116 > 79 characters)
+./Gameboard.py:40:80: E501 line too long (116 > 79 characters)
+./Gameboard.py:46:80: E501 line too long (92 > 79 characters)
+./Gameboard.py:47:80: E501 line too long (92 > 79 characters)
+./Gameboard.py:52:80: E501 line too long (92 > 79 characters)
+./Gameboard.py:53:80: E501 line too long (92 > 79 characters)
+./Gameboard.py:65:1: E303 too many blank lines (4)
+./Gameboard.py:74:1: W293 blank line contains whitespace
+./app.py:3:1: F401 'flask.redirect' imported but unused
+./app.py:4:1: F401 'json.dump' imported but unused
+./app.py:6:1: F401 'db' imported but unused
+./app.py:11:1: E402 module level import not at top of file
+./app.py:28:58: E251 unexpected spaces around keyword / parameter equals
+./app.py:28:60: E251 unexpected spaces around keyword / parameter equals
+./app.py:59:5: E303 too many blank lines (2)
+./app.py:84:1: E303 too many blank lines (3)
+./app.py:101:80: E501 line too long (109 > 79 characters)
+./app.py:110:80: E501 line too long (113 > 79 characters)
+./app.py:115:34: E231 missing whitespace after ','
+./app.py:117:39: E231 missing whitespace after ','
+./app.py:117:47: E251 unexpected spaces around keyword / parameter equals
+./app.py:117:49: E251 unexpected spaces around keyword / parameter equals
+./app.py:117:80: E501 line too long (87 > 79 characters)
+./app.py:119:1: E305 expected 2 blank lines after class or function definition, found 1
+./app.py:129:80: E501 line too long (109 > 79 characters)
+./app.py:139:80: E501 line too long (113 > 79 characters)
+./app.py:146:80: E501 line too long (86 > 79 characters)
+./app.py:150:1: E303 too many blank lines (3)
