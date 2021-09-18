@@ -75,7 +75,7 @@ def p2Join():
     elif game.player1 == 'yellow':
         game.set_player_color('p2', 'red')
     else:
-        game.set_player_color('p2', 'Error')
+        game.set_player_color('p2', 'Please wait for p1 to select color')
     return render_template('p2Join.html', status=game.player2)
 
 
@@ -93,6 +93,9 @@ Process Player 1's move
 
 @app.route('/move1', methods=['POST'])
 def p1_move():
+    if game.game_result:
+        return jsonify(move=game.board, invalid=True,
+                       winner=game.game_result, reason='Game is over')
     if game.current_turn == 'p2':
         invalid_flag = True
         invalid_reason = 'Player 2 has to move, please wait'
@@ -125,6 +128,9 @@ Same as '/move1' but instead proccess Player 2
 
 @app.route('/move2', methods=['POST'])
 def p2_move():
+    if game.game_result:
+        return jsonify(move=game.board, invalid=True,
+                       winner=game.game_result, reason='Game is over')
     if game.current_turn == 'p1':
         invalid_flag = True
         invalid_reason = 'Player 1 has to move, please wait'
