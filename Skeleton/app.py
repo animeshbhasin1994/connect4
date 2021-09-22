@@ -96,6 +96,9 @@ def p1_move():
     if game.game_result:
         return jsonify(move=game.board, invalid=True,
                        winner=game.game_result, reason='Game is over')
+    if not game.player1:
+        return jsonify(move=game.board, invalid=True,
+                       winner=game.game_result, reason='Please select color first')
     if game.current_turn == 'p2':
         invalid_flag = True
         invalid_reason = 'Player 2 has to move, please wait'
