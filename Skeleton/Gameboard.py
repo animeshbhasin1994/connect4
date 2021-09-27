@@ -76,3 +76,24 @@ class Gameboard():
             self.game_result = "draw - no winner"
         if self.four_in_a_row_check(color):
             self.game_result = 'p1' if color == self.player1 else 'p2'
+
+    def get_error_move_reason(self, current_turn='p1'):
+        if self.game_result:
+            return 'Game is over'
+        if current_turn == 'p1':
+            if not self.player1:
+                return 'Please select color first'
+            if self.current_turn == 'p2':
+                return 'Player 2 has to move, please wait'
+        else:
+            if not self.player2:
+                return 'Please select color first'
+            if self.current_turn == 'p1':
+                return 'Player 1 has to move, please wait'
+
+
+    def get_column_full_error(self , col_no):
+        if self.board[0][col_no] != 0:
+            return 'Column is full, please play in some other column'
+
+        return False
