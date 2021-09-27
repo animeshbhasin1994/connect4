@@ -91,8 +91,7 @@ class Gameboard():
             if self.current_turn == 'p1':
                 return 'Player 1 has to move, please wait'
 
-
-    def get_column_full_error(self , col_no):
+    def get_column_full_error(self, col_no):
         if self.board[0][col_no] != 0:
             return 'Column is full, please play in some other column'
 

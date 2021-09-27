@@ -34,7 +34,7 @@ class Test_TestGameboard(unittest.TestCase):
         self.assertEqual('red', game.player2)
 
     def test_make_p1_move(self):
-        #Happy path for correct move for p1
+        # Happy path for correct move for p1
         game = Gameboard()
         game.set_player_color('p1', 'red')
         game.make_p1_move(1, 2)
@@ -104,7 +104,8 @@ class Test_TestGameboard(unittest.TestCase):
         self.assertTrue(game.four_in_a_row_check('red'))
 
     def test_four_in_a_row_check_draw(self):
-        # Checks if there is a draw because board is filled and there is no 4 in a row
+        # Checks if there is a draw because board is filled and there is
+        # no 4 in a row
         game = Gameboard()
         game.set_player_color('p1', 'red')
         game.board = \
@@ -117,19 +118,18 @@ class Test_TestGameboard(unittest.TestCase):
 
         self.assertFalse(game.four_in_a_row_check('red'))
 
-
-
-
     def test_check_game_over(self):
-        #Checks if the game_result variable is correctly assigned on game getting over
+        """ Checks if the game_result variable is correctly assigned on
+         game getting over """
 
-        #Checks if game.result = draw - no winner when remaining moves are 0 are game is draw
+        """ Checks if game.result = draw - no winner when remaining moves are 0
+         are game is draw """
         game = Gameboard()
         game.remaining_moves = 0
         game.check_game_over('red')
         self.assertEqual('draw - no winner', game.game_result)
 
-        #Checks if game.result = 'p1' if p1 gets 4 in a row
+        # Checks if game.result = 'p1' if p1 gets 4 in a row
         game = Gameboard()
         game.set_player_color('p1', 'red')
         game.board = [[0, 0, 0, 0, 0, 0, 0],
@@ -154,7 +154,8 @@ class Test_TestGameboard(unittest.TestCase):
         self.assertEqual('p2', game.game_result)
 
     def test_next_move_row_index(self):
-        #Check if the correct next position(row to insert) is picked for the tile to be placed
+        """Check if the correct next position(row to insert) is picked for the
+        tile to be placed"""
         game = Gameboard()
         game.board = [[0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 0, 0, 0, 0, 0],
@@ -163,7 +164,7 @@ class Test_TestGameboard(unittest.TestCase):
                       [0, 0, 0, 0, 0, 0, 0],
                       [0, 0, 0, 0, 0, 0, 0]]
 
-        #For column 0, since row 5 is empty, next move row index = 5
+        # For column 0, since row 5 is empty, next move row index = 5
         self.assertEqual(5, game.next_move_row_index(0))
 
         game.board = [[0, 0, 0, 0, 0, 0, 0],
@@ -173,7 +174,8 @@ class Test_TestGameboard(unittest.TestCase):
                       [0, 0, 0, 0, 0, 0, 0],
                       ['red', 0, 0, 0, 0, 0, 0]]
 
-        # For column 0, since row 4 is empty & row 5 is full, next move row index = 4
+        """ For column 0, since row 4 is empty & row 5 is full, next move
+        row index = 4 """
         self.assertEqual(4, game.next_move_row_index(0))
 
         game.board = [[0, 0, 0, 0, 0, 0, 0],
@@ -201,7 +203,7 @@ class Test_TestGameboard(unittest.TestCase):
 
         self.assertEqual('Game is over', invalid_move_reason)
 
-        #Invalid move - not player 1's turn
+        # Invalid move - not player 1's turn
         game = Gameboard()
         game.set_player_color('p1', 'red')
         game.board = [[0, 0, 0, 0, 0, 0, 0],
@@ -213,9 +215,10 @@ class Test_TestGameboard(unittest.TestCase):
         game.make_p1_move(3, 2)
         invalid_move_reason = game.get_error_move_reason(current_turn='p1')
 
-        self.assertEqual('Player 2 has to move, please wait', invalid_move_reason)
+        self.assertEqual('Player 2 has to move, please wait',
+                         invalid_move_reason)
 
-        #Invalid move - not player 2's turn
+        # Invalid move - not player 2's turn
         game = Gameboard()
         game.set_player_color('p1', 'red')
         game.set_player_color('p2', 'yellow')
@@ -228,7 +231,8 @@ class Test_TestGameboard(unittest.TestCase):
         game.make_p2_move(4, 3)
         invalid_move_reason = game.get_error_move_reason(current_turn='p2')
 
-        self.assertEqual('Player 1 has to move, please wait', invalid_move_reason)
+        self.assertEqual('Player 1 has to move, please wait',
+                         invalid_move_reason)
 
         # Invalid move - Player 1 does not select color before making move
         game = Gameboard()
@@ -259,7 +263,8 @@ class Test_TestGameboard(unittest.TestCase):
                       ['red', 0, 0, 0, 0, 0, 0]]
         game.make_p1_move(0, 0)
         invalid_move_reason = game.get_column_full_error(col_no=0)
-        self.assertEqual('Column is full, please play in some other column', invalid_move_reason)
+        self.assertEqual('Column is full, please play in some other column',
+                         invalid_move_reason)
 
         # Valid Move - Current column is not filled
 
@@ -268,5 +273,7 @@ class Test_TestGameboard(unittest.TestCase):
 
         invalid_move_reason = game.get_column_full_error(col_no=0)
         self.assertFalse(invalid_move_reason)
+
+
 if __name__ == '__main__':
     unittest.main()
