@@ -93,26 +93,20 @@ Process Player 1's move
 
 @app.route('/move1', methods=['POST'])
 def p1_move():
-    if game.game_result:
+    invalid_reason = game.get_error_move_reason(current_turn='p1')
+
+    if invalid_reason:
         return jsonify(move=game.board, invalid=True,
-                       winner=game.game_result, reason='Game is over')
-    if not game.player1:
-        return jsonify(move=game.board, invalid=True,
-                       winner=game.game_result, reason='Please select color first')
-    if game.current_turn == 'p2':
-        invalid_flag = True
-        invalid_reason = 'Player 2 has to move, please wait'
-        return jsonify(move=game.board, invalid=invalid_flag,
                        winner=game.game_result, reason=invalid_reason)
+
     else:
         data = request.get_data()
         data = json.loads(str(data.decode('utf-8')))
         col = data['column']
         col_no = int(col[-1]) - 1
-        if game.board[0][col_no] != 0:
-            invalid_flag = True
-            invalid_reason = 'Column is full, please play in some other column'
-            return jsonify(move=game.board, invalid=invalid_flag,
+        invalid_reason = game.get_column_full_error(col_no)
+        if invalid_reason:
+            return jsonify(move=game.board, invalid=True,
                            winner=game.game_result, reason=invalid_reason)
 
         invalid_flag = False
@@ -131,24 +125,20 @@ Same as '/move1' but instead proccess Player 2
 
 @app.route('/move2', methods=['POST'])
 def p2_move():
-    if game.game_result:
+    invalid_reason = game.get_error_move_reason(current_turn='p2')
+
+    if invalid_reason:
         return jsonify(move=game.board, invalid=True,
-                       winner=game.game_result, reason='Game is over')
-    if game.current_turn == 'p1':
-        invalid_flag = True
-        invalid_reason = 'Player 1 has to move, please wait'
-        return jsonify(move=game.board, invalid=invalid_flag,
                        winner=game.game_result, reason=invalid_reason)
+
     else:
         data = request.get_data()
         data = json.loads(str(data.decode('utf-8')))
         col = data['column']
         col_no = int(col[-1]) - 1
-
-        if game.board[0][col_no] != 0:
-            invalid_flag = True
-            invalid_reason = 'Column is full, please play in some other column'
-            return jsonify(move=game.board, invalid=invalid_flag,
+        invalid_reason = game.get_column_full_error(col_no)
+        if invalid_reason:
+            return jsonify(move=game.board, invalid=True,
                            winner=game.game_result, reason=invalid_reason)
 
         invalid_flag = False
