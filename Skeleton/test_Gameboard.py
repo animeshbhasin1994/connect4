@@ -286,6 +286,7 @@ class Test_TestGameboard(unittest.TestCase):
         self.assertFalse(invalid_move_reason)
 
     def test_set_base_config(self):
+        # To check if the game class attributes are correctly set
         game_state_tuple = ('p2', "[[0, 0, 0, 0, 0, 0, 0],"
                                   " [0, 0, 0, 0, 0, 0, 0], "
                                   "[0, 0, 0, 0, 0, 0, 0], "
@@ -307,6 +308,7 @@ class Test_TestGameboard(unittest.TestCase):
                          self.game.remaining_moves)
 
     def test_set_game_config_from_db(self):
+        # To check if the game class attributes are correctly set from db
         game_state_tuple = ('p2', "[[0, 0, 0, 0, 0, 0, 0],"
                                   " [0, 0, 0, 0, 0, 0, 0], "
                                   "[0, 0, 0, 0, 0, 0, 0], "
