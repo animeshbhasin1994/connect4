@@ -20,7 +20,7 @@ def init_db():
         print(e)
 
     finally:
-        if conn:
+        if conn:  # pragma: no cover
             conn.close()
 
 
@@ -46,7 +46,7 @@ def add_move(move):  # will take in a tuple
         print(e)
 
     finally:
-        if conn:
+        if conn:  # pragma: no cover
             conn.close()
 
 
@@ -77,7 +77,7 @@ def getMove():
         return None
 
     finally:
-        if conn:
+        if conn:  # pragma: no cover
             conn.close()
 
 
@@ -97,7 +97,7 @@ def clear():
         print(e)
 
     finally:
-        if conn:
+        if conn:  # pragma: no cover
             conn.close()
 
 
