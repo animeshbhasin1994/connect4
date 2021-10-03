@@ -1,5 +1,6 @@
 import unittest
 from Gameboard import Gameboard
+import db
 
 
 class Test_TestGameboard(unittest.TestCase):
@@ -221,7 +222,7 @@ class Test_TestGameboard(unittest.TestCase):
                            [0, 0, 'red', 'yellow', 0, 0, 0],
                            [0, 0, 'red', 'yellow', 0, 0, 0]]
         self.game.make_p1_move(3, 2)
-        invalid_move_reason = self.\
+        invalid_move_reason = self. \
             game.get_error_move_reason(current_turn='p1')
 
         self.assertEqual('Player 2 has to move, please wait',
@@ -238,7 +239,7 @@ class Test_TestGameboard(unittest.TestCase):
                            [0, 0, 'red', 0, 0, 0, 0],
                            [0, 0, 'red', 'yellow', 0, 0, 0]]
         self.game.make_p2_move(4, 3)
-        invalid_move_reason = self.\
+        invalid_move_reason = self. \
             game.get_error_move_reason(current_turn='p2')
 
         self.assertEqual('Player 1 has to move, please wait',
@@ -248,7 +249,7 @@ class Test_TestGameboard(unittest.TestCase):
 
         self.setUp()
         self.game.make_p1_move(0, 0)
-        invalid_move_reason = self.\
+        invalid_move_reason = self. \
             game.get_error_move_reason(current_turn='p1')
 
         self.assertEqual('Please select color first', invalid_move_reason)
@@ -256,7 +257,7 @@ class Test_TestGameboard(unittest.TestCase):
         # Invalid move - Player 2 does not select color before making move
 
         self.game.make_p2_move(0, 0)
-        invalid_move_reason = self.\
+        invalid_move_reason = self. \
             game.get_error_move_reason(current_turn='p2')
 
         self.assertEqual('Please select color first', invalid_move_reason)
@@ -283,6 +284,100 @@ class Test_TestGameboard(unittest.TestCase):
 
         invalid_move_reason = self.game.get_column_full_error(col_no=0)
         self.assertFalse(invalid_move_reason)
+
+    def test_set_base_config(self):
+        game_state_tuple = ('p2', "[[0, 0, 0, 0, 0, 0, 0],"
+                                  " [0, 0, 0, 0, 0, 0, 0], "
+                                  "[0, 0, 0, 0, 0, 0, 0], "
+                                  "['yellow', 0, 0, 0, 0, 0, 0], "
+                                  "['yellow', 'red', 0, 0, 0, 0, 0], "
+                                  "['yellow', 'red', 0, 0, 0, 0,"
+                                  " 0]]", '', 'yellow', 'red', 37)
+
+        self.game.set_base_config(game_state_tuple)
+        self.assertEqual([[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0], ['yellow', 0, 0, 0, 0, 0, 0],
+                          ['yellow', 'red', 0, 0, 0, 0, 0],
+                          ['yellow', 'red', 0, 0, 0, 0, 0]], self.game.board)
+        self.assertEqual('yellow', self.game.player1)
+        self.assertEqual('red', self.game.player2)
+        self.assertEqual('', self.game.game_result)
+        self.assertEqual('p2', self.game.current_turn)
+        self.assertEqual(37,
+                         self.game.remaining_moves)
+
+    def test_set_game_config_from_db(self):
+        game_state_tuple = ('p2', "[[0, 0, 0, 0, 0, 0, 0],"
+                                  " [0, 0, 0, 0, 0, 0, 0], "
+                                  "[0, 0, 0, 0, 0, 0, 0], "
+                                  "['yellow', 0, 0, 0, 0, 0, 0], "
+                                  "['yellow', 'red', 0, 0, 0, 0, 0], "
+                                  "['yellow', 'red', 0, 0, 0, 0,"
+                                  " 0]]", '', 'yellow', 'red', 37)
+        db.add_move(game_state_tuple)
+        self.game.set_game_config('p1')
+        self.assertEqual([[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0], ['yellow', 0, 0, 0, 0, 0, 0],
+                          ['yellow', 'red', 0, 0, 0, 0, 0],
+                          ['yellow', 'red', 0, 0, 0, 0, 0]], self.game.board)
+        self.assertEqual('yellow', self.game.player1)
+        self.assertEqual('red', self.game.player2)
+        self.assertEqual('', self.game.game_result)
+        self.assertEqual('p2', self.game.current_turn)
+        self.assertEqual(37,
+                         self.game.remaining_moves)
+
+    def test_set_game_config_db_empty(self):
+        # To check if color is correctly setup for p1 if db is empty
+        db.clear()
+        db.init_db()
+        self.game.set_game_config('p1', 'yellow')
+        self.assertEqual('yellow', self.game.player1)
+
+        # To check if p2 color is set to yellow when p1 is red and db is empty
+        self.setUp()
+        db.clear()
+        db.init_db()
+        self.game.set_player_color('p1', 'red')
+        self.game.set_game_config('p2')
+        self.assertEqual('yellow', self.game.player2)
+
+        # To check if p2 color is set to red when p1 is yellow and db is empty
+        self.setUp()
+        db.clear()
+        db.init_db()
+
+        self.game.set_player_color('p1', 'yellow')
+        self.game.set_game_config('p2')
+        self.assertEqual('red', self.game.player2)
+
+        # To check if p2 color is set to error message when p1 has not selected
+        # color and db is empty
+        self.setUp()
+        db.clear()
+        db.init_db()
+
+        self.game.set_game_config('p2')
+        self.assertEqual('Please wait for p1 to select color',
+                         self.game.player2)
+
+    def test_get_game_config(self):
+        # To check if game config is retrieved correctly
+        self.game.set_player_color('p1', 'red')
+        self.game.set_player_color('p2', 'yellow')
+        self.game.make_p1_move(1, 2)
+        self.game.make_p2_move(2, 2)
+        self.game.make_p1_move(3, 2)
+
+        game_config = self.game.get_game_config()
+
+        self.assertEqual(
+            game_config, ('p2',
+                          [[0, 0, 0, 0, 0, 0, 0], [0, 0, 'red', 0, 0, 0, 0],
+                           [0, 0, 'yellow', 0, 0, 0, 0],
+                           [0, 0, 'red', 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]], '',
+                          'red', 'yellow', 39))
 
 
 if __name__ == '__main__':
