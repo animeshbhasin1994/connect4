@@ -15,7 +15,7 @@ def init_db():
         conn.execute('CREATE TABLE GAME(current_turn TEXT, board TEXT,' +
                      'winner TEXT, player1 TEXT, player2 TEXT' +
                      ', remaining_moves INT)')
-        print('Database Online, table created')
+        # print('Database Online, table created')
     except Error as e:
         print(e)
 
@@ -41,7 +41,7 @@ def add_move(move):  # will take in a tuple
                     move[5])
         conn.execute(sql_string)
         conn.commit()
-        print('Move record, record inserted')
+        # print('Move record, record inserted')
     except Error as e:
         print(e)
 
@@ -64,12 +64,12 @@ def getMove():
         cursor = conn.cursor()
         cursor.execute('''select * from GAME ;''')
         rows = cursor.fetchall()
-        print(rows)
+
         if rows:
-            print('Get record, record fetched')
+            # print('Get record, record fetched')
             return rows[0]
         else:
-            print('No move found')
+            # print('No move found')
             return None
 
     except Error as e:
@@ -92,7 +92,7 @@ def clear():
     try:
         conn = sqlite3.connect('sqlite_db')
         conn.execute("DROP TABLE GAME")
-        print('Database Cleared')
+        # print('Database Cleared')
     except Error as e:
         print(e)
 
