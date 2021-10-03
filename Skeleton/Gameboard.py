@@ -1,4 +1,5 @@
-# import db
+import db
+import ast
 
 
 class Gameboard():
@@ -13,6 +14,7 @@ class Gameboard():
     '''
     Add Helper functions as needed to handle moves and update board and turns
     '''
+
     def reset_game(self):
         self.__init__()
 
@@ -25,7 +27,7 @@ class Gameboard():
     def next_move_row_index(self, col):
         for i in range(6):
             if self.board[i][col] != 0:
-                return i-1
+                return i - 1
         return 5
 
     def make_p1_move(self, row_idx, col_no):
@@ -49,7 +51,7 @@ class Gameboard():
 
         for j in range(4):
             for i in range(6):
-                if self.board[i][j+3] == color \
+                if self.board[i][j + 3] == color \
                         and self.board[i][j + 2] == color \
                         and self.board[i][j + 1] == color \
                         and self.board[i][j] == color:
@@ -57,9 +59,9 @@ class Gameboard():
 
         for j in range(4):
             for i in range(3):
-                if self.board[i + 3][j + 3] == color  \
+                if self.board[i + 3][j + 3] == color \
                         and self.board[i + 2][j + 2] == color \
-                        and self.board[i + 1][j + 1] == color\
+                        and self.board[i + 1][j + 1] == color \
                         and self.board[i][j] == color:
                     return True
 
@@ -96,3 +98,31 @@ class Gameboard():
             return 'Column is full, please play in some other column'
 
         return False
+
+    def set_base_config(self, game_state_tuple):
+        self.current_turn = game_state_tuple[0]
+        self.board = ast.literal_eval(game_state_tuple[1])
+        self.game_result = game_state_tuple[2]
+        self.player1 = game_state_tuple[3]
+        self.player2 = game_state_tuple[4]
+        self.remaining_moves = game_state_tuple[5]
+
+    def set_game_config(self, player, status=None):
+        game_state_tuple = db.getMove()
+        if game_state_tuple:
+            self.set_base_config(game_state_tuple)
+        else:
+            if player == 'p1':
+                self.set_player_color('p1', status)
+            else:
+                if self.player1 == 'red':
+                    self.set_player_color('p2', 'yellow')
+                elif self.player1 == 'yellow':
+                    self.set_player_color('p2', 'red')
+                else:
+                    self.set_player_color(
+                        'p2', 'Please wait for p1 to select color')
+
+    def get_game_config(self):
+        return (self.current_turn, self.board, self.game_result,
+                self.player1, self.player2, self.remaining_moves)

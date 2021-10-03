@@ -4,11 +4,9 @@ from flask import Flask, render_template, request, jsonify
 # from flask import redirect
 # from json import dump
 from Gameboard import Gameboard
-# import db
-
+import db
 
 app = Flask(__name__)
-
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
@@ -26,6 +24,7 @@ Initial Webpage where gameboard is initialized
 @app.route('/', methods=['GET'])
 def player1_connect():
     game.reset_game()
+    db.reset_db()
     return render_template('player1_connect.html', status="Pick a Color.")
 
 
@@ -54,8 +53,8 @@ Assign player1 their color
 @app.route('/p1Color', methods=['GET'])
 def player1_config():
     status = request.args.get('color', '')
-    game.set_player_color('p1', status)
-    return render_template('player1_connect.html', status=status)
+    game.set_game_config('p1', status)
+    return render_template('player1_connect.html', status=game.player1)
 
 
 '''
@@ -70,12 +69,7 @@ Assign player2 their color
 
 @app.route('/p2Join', methods=['GET'])
 def p2Join():
-    if game.player1 == 'red':
-        game.set_player_color('p2', 'yellow')
-    elif game.player1 == 'yellow':
-        game.set_player_color('p2', 'red')
-    else:
-        game.set_player_color('p2', 'Please wait for p1 to select color')
+    game.set_game_config('p2')
     return render_template('p2Join.html', status=game.player2)
 
 
@@ -96,6 +90,8 @@ def p1_move():
     invalid_reason = game.get_error_move_reason(current_turn='p1')
 
     if invalid_reason:
+        move_tuple = game.get_game_config()
+        db.add_move(move_tuple)
         return jsonify(move=game.board, invalid=True,
                        winner=game.game_result, reason=invalid_reason)
 
@@ -106,6 +102,8 @@ def p1_move():
         col_no = int(col[-1]) - 1
         invalid_reason = game.get_column_full_error(col_no)
         if invalid_reason:
+            move_tuple = game.get_game_config()
+            db.add_move(move_tuple)
             return jsonify(move=game.board, invalid=True,
                            winner=game.game_result, reason=invalid_reason)
 
@@ -114,6 +112,8 @@ def p1_move():
 
         game.make_p1_move(row_idx, col_no)
         game.check_game_over(game.player1)
+        move_tuple = game.get_game_config()
+        db.add_move(move_tuple)
         return jsonify(move=game.board, invalid=invalid_flag,
                        winner=game.game_result)
 
@@ -128,6 +128,8 @@ def p2_move():
     invalid_reason = game.get_error_move_reason(current_turn='p2')
 
     if invalid_reason:
+        move_tuple = game.get_game_config()
+        db.add_move(move_tuple)
         return jsonify(move=game.board, invalid=True,
                        winner=game.game_result, reason=invalid_reason)
 
@@ -138,6 +140,8 @@ def p2_move():
         col_no = int(col[-1]) - 1
         invalid_reason = game.get_column_full_error(col_no)
         if invalid_reason:
+            move_tuple = game.get_game_config()
+            db.add_move(move_tuple)
             return jsonify(move=game.board, invalid=True,
                            winner=game.game_result, reason=invalid_reason)
 
@@ -146,6 +150,8 @@ def p2_move():
 
         game.make_p2_move(row_idx, col_no)
         game.check_game_over(game.player2)
+        move_tuple = game.get_game_config()
+        db.add_move(move_tuple)
         return jsonify(move=game.board, invalid=invalid_flag,
                        winner=game.game_result)
 
