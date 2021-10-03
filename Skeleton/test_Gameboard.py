@@ -329,23 +329,20 @@ class Test_TestGameboard(unittest.TestCase):
 
     def test_set_game_config_db_empty(self):
         # To check if color is correctly setup for p1 if db is empty
-        db.clear()
-        db.init_db()
+        db.reset_db()
         self.game.set_game_config('p1', 'yellow')
         self.assertEqual('yellow', self.game.player1)
 
         # To check if p2 color is set to yellow when p1 is red and db is empty
         self.setUp()
-        db.clear()
-        db.init_db()
+        db.reset_db()
         self.game.set_player_color('p1', 'red')
         self.game.set_game_config('p2')
         self.assertEqual('yellow', self.game.player2)
 
         # To check if p2 color is set to red when p1 is yellow and db is empty
         self.setUp()
-        db.clear()
-        db.init_db()
+        db.reset_db()
 
         self.game.set_player_color('p1', 'yellow')
         self.game.set_game_config('p2')
@@ -354,8 +351,7 @@ class Test_TestGameboard(unittest.TestCase):
         # To check if p2 color is set to error message when p1 has not selected
         # color and db is empty
         self.setUp()
-        db.clear()
-        db.init_db()
+        db.reset_db()
 
         self.game.set_game_config('p2')
         self.assertEqual('Please wait for p1 to select color',
