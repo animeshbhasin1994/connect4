@@ -73,8 +73,8 @@ def getMove():
             return None
 
     except Error as e:
-        return None
         print(e)
+        return None
 
     finally:
         if conn:
