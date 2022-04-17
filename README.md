@@ -3,6 +3,5 @@ individual project for Fall 2021
 
 Name - Animesh Bhasin
 UNI - ab5051
-Video Demo link - https://www.youtube.com/watch?v=8ZEJDFMMkJQ
+Video Demo link - https://youtu.be/3TiwcjN7fME
 
-Please note I have already implemented assignment 2 and committed it to the main branch

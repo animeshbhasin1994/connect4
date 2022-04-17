@@ -15,12 +15,12 @@ def init_db():
         conn.execute('CREATE TABLE GAME(current_turn TEXT, board TEXT,' +
                      'winner TEXT, player1 TEXT, player2 TEXT' +
                      ', remaining_moves INT)')
-        print('Database Online, table created')
+        # print('Database Online, table created')
     except Error as e:
         print(e)
 
     finally:
-        if conn:
+        if conn:  # pragma: no cover
             conn.close()
 
 
@@ -32,7 +32,22 @@ Insert Tuple into table
 
 
 def add_move(move):  # will take in a tuple
-    pass
+    try:
+        conn = sqlite3.connect('sqlite_db')
+        conn.execute('delete from GAME;')
+        sql_string = '''insert into GAME values ('{}', "{}", '{}',
+            '{}', '{}', {});''' \
+            .format(move[0], str(move[1]), move[2], move[3], move[4],
+                    move[5])
+        conn.execute(sql_string)
+        conn.commit()
+        # print('Move record, record inserted')
+    except Error as e:
+        print(e)
+
+    finally:
+        if conn:  # pragma: no cover
+            conn.close()
 
 
 '''
@@ -44,7 +59,26 @@ return (current_turn, board, winner, player1, player2, remaining_moves)
 def getMove():
     # will return tuple(current_turn, board, winner, player1, player2,
     # remaining_moves) or None if db fails
-    pass
+    try:
+        conn = sqlite3.connect('sqlite_db')
+        cursor = conn.cursor()
+        cursor.execute('''select * from GAME ;''')
+        rows = cursor.fetchall()
+
+        if rows:
+            # print('Get record, record fetched')
+            return rows[0]
+        else:
+            # print('No move found')
+            return None
+
+    except Error as e:
+        print(e)
+        return None
+
+    finally:
+        if conn:  # pragma: no cover
+            conn.close()
 
 
 '''
@@ -58,10 +92,15 @@ def clear():
     try:
         conn = sqlite3.connect('sqlite_db')
         conn.execute("DROP TABLE GAME")
-        print('Database Cleared')
+        # print('Database Cleared')
     except Error as e:
         print(e)
 
     finally:
-        if conn:
+        if conn:  # pragma: no cover
             conn.close()
+
+
+def reset_db():
+    clear()
+    init_db()

@@ -1,104 +1,122 @@
 import unittest
 from Gameboard import Gameboard
+import db
 
 
 class Test_TestGameboard(unittest.TestCase):
+    def setUp(self):
+        self.game = Gameboard()
+
+    def tearDown(self):
+        self.game = None
+
     def test_reset_game(self):
+        # Checks if the game is correctly reset on restarting ( "/" endpoint)
         expected_game = Gameboard()
-        game = Gameboard()
-        game.set_player_color('p1', 'red')
-        game.set_player_color('p2', 'yellow')
-        game.make_p1_move(1, 2)
-        game.make_p2_move(2, 2)
-        game.make_p1_move(3, 2)
-        game.reset_game()
-        self.assertEqual(expected_game.board, game.board)
-        self.assertEqual(expected_game.player1, game.player1)
-        self.assertEqual(expected_game.player2, game.player2)
-        self.assertEqual(expected_game.game_result, game.game_result)
-        self.assertEqual(expected_game.current_turn, game.current_turn)
-        self.assertEqual(expected_game.remaining_moves, game.remaining_moves)
+
+        self.game.set_player_color('p1', 'red')
+        self.game.set_player_color('p2', 'yellow')
+        self.game.make_p1_move(1, 2)
+        self.game.make_p2_move(2, 2)
+        self.game.make_p1_move(3, 2)
+        self.game.reset_game()
+        self.assertEqual(expected_game.board, self.game.board)
+        self.assertEqual(expected_game.player1, self.game.player1)
+        self.assertEqual(expected_game.player2, self.game.player2)
+        self.assertEqual(expected_game.game_result, self.game.game_result)
+        self.assertEqual(expected_game.current_turn, self.game.current_turn)
+        self.assertEqual(expected_game.remaining_moves,
+                         self.game.remaining_moves)
 
     def test_set_player_color(self):
-        game = Gameboard()
-        game.set_player_color('p1', 'red')
-        game.set_player_color('p2', 'yellow')
-        self.assertEqual('red', game.player1)
-        self.assertEqual('yellow', game.player2)
+        # Checks if the colors are correctly assigned to each player
 
-        game.set_player_color('p1', 'yellow')
-        game.set_player_color('p2', 'red')
-        self.assertEqual('yellow', game.player1)
-        self.assertEqual('red', game.player2)
+        self.game.set_player_color('p1', 'red')
+        self.game.set_player_color('p2', 'yellow')
+        self.assertEqual('red', self.game.player1)
+        self.assertEqual('yellow', self.game.player2)
+
+        self.game.set_player_color('p1', 'yellow')
+        self.game.set_player_color('p2', 'red')
+        self.assertEqual('yellow', self.game.player1)
+        self.assertEqual('red', self.game.player2)
 
     def test_make_p1_move(self):
-        game = Gameboard()
-        game.set_player_color('p1', 'red')
-        game.make_p1_move(1, 2)
-        self.assertEqual('red', game.board[1][2])
-        self.assertEqual(game.current_turn, 'p2')
-        self.assertEqual(game.remaining_moves, 41)
+        # Happy path for correct move for p1
+
+        self.game.set_player_color('p1', 'red')
+        self.game.make_p1_move(1, 2)
+        self.assertEqual('red', self.game.board[1][2])
+        self.assertEqual(self.game.current_turn, 'p2')
+        self.assertEqual(self.game.remaining_moves, 41)
 
     def test_make_p2_move(self):
-        game = Gameboard()
-        game.set_player_color('p2', 'yellow')
-        game.make_p2_move(1, 5)
-        self.assertEqual('yellow', game.board[1][5])
-        self.assertEqual(game.current_turn, 'p1')
-        self.assertEqual(game.remaining_moves, 41)
+        # Happy path for correct move for p2
+
+        self.game.set_player_color('p2', 'yellow')
+        self.game.make_p2_move(1, 5)
+        self.assertEqual('yellow', self.game.board[1][5])
+        self.assertEqual(self.game.current_turn, 'p1')
+        self.assertEqual(self.game.remaining_moves, 41)
 
     def test_four_in_a_row_check_vertical(self):
-        game = Gameboard()
-        game.set_player_color('p1', 'red')
-        game.board = [[0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 'red', 0, 0, 0, 0],
-                      [0, 0, 'red', 'yellow', 0, 0, 0],
-                      [0, 0, 'red', 'yellow', 0, 0, 0],
-                      [0, 0, 'red', 'yellow', 0, 0, 0]]
+        # Checks if there is a winning move in vertical direction
+        self.game.set_player_color('p1', 'red')
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 'red', 0, 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0]]
 
-        self.assertTrue(game.four_in_a_row_check('red'))
+        self.assertTrue(self.game.four_in_a_row_check('red'))
 
     def test_four_in_a_row_check_horizontal(self):
-        game = Gameboard()
-        game.set_player_color('p1', 'red')
-        game.board = [[0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 'yellow', 'yellow', 'yellow', 0, 0],
-                      [0, 0, 'red', 'red', 'red', 'red', 0]]
+        # Checks if there is a winning move in horizontal direction
 
-        self.assertTrue(game.four_in_a_row_check('red'))
+        self.game.set_player_color('p1', 'red')
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 'yellow', 'yellow', 'yellow', 0, 0],
+                           [0, 0, 'red', 'red', 'red', 'red', 0]]
 
-    def test_four_in_a_row_check_positive_diaganol(self):
-        game = Gameboard()
-        game.set_player_color('p1', 'red')
-        game.board = [[0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 'red', 0, 0, 0],
-                      [0, 0, 'red', 'yellow', 0, 0, 0],
-                      [0, 'red', 'red', 'yellow', 0, 0, 'red'],
-                      ['red', 'yellow', 'yellow', 'yellow', 0, 0, 'yellow']]
+        self.assertTrue(self.game.four_in_a_row_check('red'))
 
-        self.assertTrue(game.four_in_a_row_check('red'))
+    def test_four_in_a_row_check_positive_diagonal(self):
+        # Checks if there is a winning move in positive diagonal direction
 
-    def test_four_in_a_row_check_negative_diaganol(self):
-        game = Gameboard()
-        game.set_player_color('p1', 'red')
-        game.board = [[0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      ['red', 0, 0, 0, 0, 0, 0],
-                      ['yellow', 'red', 0, 0, 0, 0, 'red'],
-                      ['yellow', 'yellow', 'red', 0, 0, 0, 'red'],
-                      ['yellow', 'yellow', 'yellow', 'red', 0, 0, 'red']]
+        self.game.set_player_color('p1', 'red')
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 'red', 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0],
+                           [0, 'red', 'red', 'yellow', 0, 0, 'red'],
+                           ['red', 'yellow', 'yellow', 'yellow', 0, 0,
+                            'yellow']]
 
-        self.assertTrue(game.four_in_a_row_check('red'))
+        self.assertTrue(self.game.four_in_a_row_check('red'))
+
+    def test_four_in_a_row_check_negative_diagonal(self):
+        # Checks if there is a winning move in negative diagonal direction
+
+        self.game.set_player_color('p1', 'red')
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           ['red', 0, 0, 0, 0, 0, 0],
+                           ['yellow', 'red', 0, 0, 0, 0, 'red'],
+                           ['yellow', 'yellow', 'red', 0, 0, 0, 'red'],
+                           ['yellow', 'yellow', 'yellow', 'red', 0, 0, 'red']]
+
+        self.assertTrue(self.game.four_in_a_row_check('red'))
 
     def test_four_in_a_row_check_draw(self):
-        game = Gameboard()
-        game.set_player_color('p1', 'red')
-        game.board = \
+        # Checks if there is a draw because board is filled and there is
+        # no 4 in a row
+
+        self.game.set_player_color('p1', 'red')
+        self.game.board = \
             [['yellow', 'red', 'yellow', 'red', 'yellow', 'red', 'yellow'],
              ['yellow', 'red', 'yellow', 'red', 'yellow', 'red', 'yellow'],
              ['yellow', 'red', 'yellow', 'red', 'yellow', 'red', 'yellow'],
@@ -106,63 +124,258 @@ class Test_TestGameboard(unittest.TestCase):
              ['red', 'yellow', 'red', 'yellow', 'red', 'yellow', 'red'],
              ['red', 'yellow', 'red', 'yellow', 'red', 'yellow', 'red']]
 
-        self.assertFalse(game.four_in_a_row_check('red'))
+        self.assertFalse(self.game.four_in_a_row_check('red'))
 
     def test_check_game_over(self):
-        game = Gameboard()
-        game.remaining_moves = 0
-        game.check_game_over('red')
-        self.assertEqual('draw - no winner', game.game_result)
+        """ Checks if the game_result variable is correctly assigned on
+         game getting over """
 
-        game = Gameboard()
-        game.set_player_color('p1', 'red')
-        game.board = [[0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 'red', 0, 0, 0, 0],
-                      [0, 0, 'red', 'yellow', 0, 0, 0],
-                      [0, 0, 'red', 'yellow', 0, 0, 0],
-                      [0, 0, 'red', 'yellow', 0, 0, 0]]
-        game.check_game_over('red')
-        self.assertEqual('p1', game.game_result)
+        """ Checks if self.game.result = draw - no winner when remaining moves are 0
+         are game is draw """
 
-        game = Gameboard()
-        game.set_player_color('p2', 'yellow')
-        game.board = [[0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 'yellow', 0, 0, 0, 0, 0],
-                      [0, 'yellow', 'red', 0, 0, 0, 0],
-                      [0, 'yellow', 'red', 0, 0, 0, 0],
-                      [0, 'yellow', 'red', 0, 0, 0, 0]]
-        game.check_game_over('yellow')
-        self.assertEqual('p2', game.game_result)
+        self.game.remaining_moves = 0
+        self.game.check_game_over('red')
+        self.assertEqual('draw - no winner', self.game.game_result)
+
+        # Checks if self.game.result = 'p1' if p1 gets 4 in a row
+
+        self.game.set_player_color('p1', 'red')
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 'red', 0, 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0]]
+        self.game.check_game_over('red')
+        self.assertEqual('p1', self.game.game_result)
+
+        # Checks if self.game.result = 'p2' if p2 gets 4 in a row
+
+        self.game.set_player_color('p2', 'yellow')
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 'yellow', 0, 0, 0, 0, 0],
+                           [0, 'yellow', 'red', 0, 0, 0, 0],
+                           [0, 'yellow', 'red', 0, 0, 0, 0],
+                           [0, 'yellow', 'red', 0, 0, 0, 0]]
+        self.game.check_game_over('yellow')
+        self.assertEqual('p2', self.game.game_result)
 
     def test_next_move_row_index(self):
-        game = Gameboard()
-        game.board = [[0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0]]
-        self.assertEqual(5, game.next_move_row_index(0))
+        """Check if the correct next position(row to insert) is picked for the
+        tile to be placed"""
 
-        game.board = [[0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 0, 0],
-                      ['red', 0, 0, 0, 0, 0, 0]]
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0]]
 
-        self.assertEqual(4, game.next_move_row_index(0))
+        # For column 0, since row 5 is empty, next move row index = 5
+        self.assertEqual(5, self.game.next_move_row_index(0))
 
-        game.board = [[0, 0, 0, 0, 0, 0, 0],
-                      ['red', 0, 0, 0, 0, 0, 0],
-                      ['yellow', 0, 0, 0, 0, 0, 0],
-                      ['red', 0, 0, 0, 0, 0, 0],
-                      ['yellow', 0, 0, 0, 0, 0, 0],
-                      ['red', 0, 0, 0, 0, 0, 0]]
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           ['red', 0, 0, 0, 0, 0, 0]]
 
-        self.assertEqual(0, game.next_move_row_index(0))
+        """ For column 0, since row 4 is empty & row 5 is full, next move
+        row index = 4 """
+        self.assertEqual(4, self.game.next_move_row_index(0))
+
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           ['red', 0, 0, 0, 0, 0, 0],
+                           ['yellow', 0, 0, 0, 0, 0, 0],
+                           ['red', 0, 0, 0, 0, 0, 0],
+                           ['yellow', 0, 0, 0, 0, 0, 0],
+                           ['red', 0, 0, 0, 0, 0, 0]]
+
+        # For column 0, since row 1-5 is full, next move row index = 0
+        self.assertEqual(0, self.game.next_move_row_index(0))
+
+    def test_get_error_move_reason(self):
+        # Invalid move - winner already declared
+
+        self.game.set_player_color('p1', 'red')
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 'red', 0, 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0]]
+        self.game.check_game_over('red')
+        invalid_move_reason = \
+            self.game.get_error_move_reason(current_turn='p2')
+
+        self.assertEqual('Game is over', invalid_move_reason)
+
+        # Invalid move - not player 1's turn
+        self.setUp()
+        self.game.set_player_color('p1', 'red')
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0]]
+        self.game.make_p1_move(3, 2)
+        invalid_move_reason = self. \
+            game.get_error_move_reason(current_turn='p1')
+
+        self.assertEqual('Player 2 has to move, please wait',
+                         invalid_move_reason)
+
+        # Invalid move - not player 2's turn
+        self.setUp()
+        self.game.set_player_color('p1', 'red')
+        self.game.set_player_color('p2', 'yellow')
+        self.game.board = [[0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0],
+                           [0, 0, 'red', 0, 0, 0, 0],
+                           [0, 0, 'red', 'yellow', 0, 0, 0]]
+        self.game.make_p2_move(4, 3)
+        invalid_move_reason = self. \
+            game.get_error_move_reason(current_turn='p2')
+
+        self.assertEqual('Player 1 has to move, please wait',
+                         invalid_move_reason)
+
+        # Invalid move - Player 1 does not select color before making move
+
+        self.setUp()
+        self.game.make_p1_move(0, 0)
+        invalid_move_reason = self. \
+            game.get_error_move_reason(current_turn='p1')
+
+        self.assertEqual('Please select color first', invalid_move_reason)
+
+        # Invalid move - Player 2 does not select color before making move
+
+        self.game.make_p2_move(0, 0)
+        invalid_move_reason = self. \
+            game.get_error_move_reason(current_turn='p2')
+
+        self.assertEqual('Please select color first', invalid_move_reason)
+
+    def test_get_column_full_error(self):
+        # Invalid Move - Current column is filled
+
+        self.game.set_player_color('p1', 'red')
+        self.game.board = [['yellow', 0, 0, 0, 0, 0, 0],
+                           ['red', 0, 0, 0, 0, 0, 0],
+                           ['yellow', 0, 0, 0, 0, 0, 0],
+                           ['red', 0, 0, 0, 0, 0, 0],
+                           ['yellow', 0, 0, 0, 0, 0, 0],
+                           ['red', 0, 0, 0, 0, 0, 0]]
+        self.game.make_p1_move(0, 0)
+        invalid_move_reason = self.game.get_column_full_error(col_no=0)
+        self.assertEqual('Column is full, please play in some other column',
+                         invalid_move_reason)
+
+        # Valid Move - Current column is not filled
+
+        self.setUp()
+        self.game.set_player_color('p1', 'red')
+
+        invalid_move_reason = self.game.get_column_full_error(col_no=0)
+        self.assertFalse(invalid_move_reason)
+
+    def test_set_base_config(self):
+        # To check if the game class attributes are correctly set
+        game_state_tuple = ('p2', "[[0, 0, 0, 0, 0, 0, 0],"
+                                  " [0, 0, 0, 0, 0, 0, 0], "
+                                  "[0, 0, 0, 0, 0, 0, 0], "
+                                  "['yellow', 0, 0, 0, 0, 0, 0], "
+                                  "['yellow', 'red', 0, 0, 0, 0, 0], "
+                                  "['yellow', 'red', 0, 0, 0, 0,"
+                                  " 0]]", '', 'yellow', 'red', 37)
+
+        self.game.set_base_config(game_state_tuple)
+        self.assertEqual([[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0], ['yellow', 0, 0, 0, 0, 0, 0],
+                          ['yellow', 'red', 0, 0, 0, 0, 0],
+                          ['yellow', 'red', 0, 0, 0, 0, 0]], self.game.board)
+        self.assertEqual('yellow', self.game.player1)
+        self.assertEqual('red', self.game.player2)
+        self.assertEqual('', self.game.game_result)
+        self.assertEqual('p2', self.game.current_turn)
+        self.assertEqual(37,
+                         self.game.remaining_moves)
+
+    def test_set_game_config_from_db(self):
+        # To check if the game class attributes are correctly set from db
+        game_state_tuple = ('p2', "[[0, 0, 0, 0, 0, 0, 0],"
+                                  " [0, 0, 0, 0, 0, 0, 0], "
+                                  "[0, 0, 0, 0, 0, 0, 0], "
+                                  "['yellow', 0, 0, 0, 0, 0, 0], "
+                                  "['yellow', 'red', 0, 0, 0, 0, 0], "
+                                  "['yellow', 'red', 0, 0, 0, 0,"
+                                  " 0]]", '', 'yellow', 'red', 37)
+        db.add_move(game_state_tuple)
+        self.game.set_game_config('p1')
+        self.assertEqual([[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0], ['yellow', 0, 0, 0, 0, 0, 0],
+                          ['yellow', 'red', 0, 0, 0, 0, 0],
+                          ['yellow', 'red', 0, 0, 0, 0, 0]], self.game.board)
+        self.assertEqual('yellow', self.game.player1)
+        self.assertEqual('red', self.game.player2)
+        self.assertEqual('', self.game.game_result)
+        self.assertEqual('p2', self.game.current_turn)
+        self.assertEqual(37,
+                         self.game.remaining_moves)
+
+    def test_set_game_config_db_empty(self):
+        # To check if color is correctly setup for p1 if db is empty
+        db.reset_db()
+        self.game.set_game_config('p1', 'yellow')
+        self.assertEqual('yellow', self.game.player1)
+
+        # To check if p2 color is set to yellow when p1 is red and db is empty
+        self.setUp()
+        db.reset_db()
+        self.game.set_player_color('p1', 'red')
+        self.game.set_game_config('p2')
+        self.assertEqual('yellow', self.game.player2)
+
+        # To check if p2 color is set to red when p1 is yellow and db is empty
+        self.setUp()
+        db.reset_db()
+
+        self.game.set_player_color('p1', 'yellow')
+        self.game.set_game_config('p2')
+        self.assertEqual('red', self.game.player2)
+
+        # To check if p2 color is set to error message when p1 has not selected
+        # color and db is empty
+        self.setUp()
+        db.reset_db()
+
+        self.game.set_game_config('p2')
+        self.assertEqual('Please wait for p1 to select color',
+                         self.game.player2)
+
+    def test_get_game_config(self):
+        # To check if game config is retrieved correctly
+        self.game.set_player_color('p1', 'red')
+        self.game.set_player_color('p2', 'yellow')
+        self.game.make_p1_move(1, 2)
+        self.game.make_p2_move(2, 2)
+        self.game.make_p1_move(3, 2)
+
+        game_config = self.game.get_game_config()
+
+        self.assertEqual(
+            game_config, ('p2',
+                          [[0, 0, 0, 0, 0, 0, 0], [0, 0, 'red', 0, 0, 0, 0],
+                           [0, 0, 'yellow', 0, 0, 0, 0],
+                           [0, 0, 'red', 0, 0, 0, 0],
+                           [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]], '',
+                          'red', 'yellow', 39))
 
 
 if __name__ == '__main__':
