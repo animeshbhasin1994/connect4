@@ -1,7 +1,9 @@
-# COMSW4156_001_2021_3---ADVANCED-SOFTWARE-ENGINEERING
-individual project for Fall 2021
-
-Name - Animesh Bhasin
-UNI - ab5051
+# Connect-4
 Video Demo link - https://youtu.be/3TiwcjN7fME
+
+This is a simple game created as part of an individual project in my university. Some key components used are :
+* Flask for developing the app and endpoints
+* unittest and coverage for unit testing
+* flake8 for spotting bugs
+* A local sqllite3 database to maintain game state
 
